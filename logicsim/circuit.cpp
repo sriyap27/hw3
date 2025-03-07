@@ -110,6 +110,13 @@ bool Circuit::parse(const char* fname)
                     m_gates.push_back(new Or2Gate(m_wires[stoi(s_in1)], m_wires[stoi(s_in2)], m_wires[stoi(s_output)]));
                 }
                 //Add code here to support the NOT gate type
+                if (s_type == "NOT") {
+                    std::string s_in1;
+                    getline(ss, s_in1, ',');
+                    std::string s_output;
+                    getline(ss, s_output, ',');
+                    m_gates.push_back(new NotGate(m_wires[stoi(s_in1)], m_wires[stoi(s_output)]));
+                }
             }
         }
         if(line == "INJECT")
@@ -142,7 +149,6 @@ bool Circuit::advance(std::ostream& os)
 	{
 		return false;
 	}
-    
     m_current_time = m_pq.top()->time;
     std::stringstream ss;
     ss << "@" << m_current_time << std::endl;
@@ -185,7 +191,6 @@ bool Circuit::advance(std::ostream& os)
 
 void Circuit::run(std::ostream& os)
 {
-	
 	while(advance(os)){
         
 	}
@@ -211,7 +216,6 @@ void Circuit::startUml(std::ostream& os)
 				}
 		}
     os << std::endl;
-    
 }
 
 void Circuit::endUml(std::ostream& os)

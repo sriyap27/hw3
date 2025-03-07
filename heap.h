@@ -2,6 +2,7 @@
 #define HEAP_H
 #include <functional>
 #include <stdexcept>
+#include <vector>
 
 template <typename T, typename PComparator = std::less<T> >
 class Heap
@@ -61,13 +62,78 @@ public:
 
 private:
   /// Add whatever helper functions and data members you need below
+  std::vector<T> data;
+  int m_ary;
+  PComparator comp;
 
-
-
+  void bubbleUp(int idx);
+  void bubbleDown(int idx);
 
 };
 
 // Add implementation of member functions here
+template <typename T, typename PComparator>
+Heap<T, PComparator>::Heap(int m, PComparator c) : m_ary(m), comp(c) {}
+
+template <typename T, typename PComparator>
+Heap<T, PComparator>::~Heap() {}
+
+template<typename T, typename PComparator>
+bool Heap<T, PComparator>::empty() const{
+  if (data.size() == 0) {
+    return true;
+  }
+  return false;
+}
+
+template<typename T, typename PComparator>
+size_t Heap<T, PComparator>::size() const{
+  return data.size();
+}
+
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::bubbleUp(int idx) {
+  while (idx > 0) {
+    int parent = (idx - 1) / m_ary;
+    if (comp(data[idx], data[parent])) {
+      std::swap(data[idx], data[parent]);
+      idx = parent;
+    }
+    else {
+      break;
+    }
+  }
+}
+
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::bubbleDown(int idx) {
+  while (m_ary * idx + 1 < data.size()) {
+    int best = idx;
+    // comparing children
+    for (int i = 1; i <= m_ary; i++) {
+      int child = m_ary * idx + i;
+      if (child < data.size()) {
+        if (comp(data[child], data[best])) {
+          best = child;
+        }
+      }
+
+    }
+    if (best == idx) {
+      break;
+    }
+    std::swap(data[idx], data[best]);
+    idx = best;
+  }
+}
+
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::push(const T& item) {
+  int idx = data.size();
+  data.push_back(item);
+  bubbleUp(idx);
+}
+
 
 
 // We will start top() for you to handle the case of 
@@ -81,12 +147,12 @@ T const & Heap<T,PComparator>::top() const
     // ================================
     // throw the appropriate exception
     // ================================
-
+    throw std::underflow_error("Empty Heap");
 
   }
   // If we get here we know the heap has at least 1 item
   // Add code to return the top element
-
+  return data.front();
 
 
 }
@@ -101,13 +167,16 @@ void Heap<T,PComparator>::pop()
     // ================================
     // throw the appropriate exception
     // ================================
-
+    throw std::underflow_error("Empty Heap");
 
   }
-
-
+  std::swap(data[0], data[data.size() - 1]);
+  data.pop_back();
+  if (!empty()) bubbleDown(0);
 
 }
+
+
 
 
 

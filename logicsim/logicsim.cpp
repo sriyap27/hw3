@@ -14,7 +14,8 @@ int main(int argc, char* argv[])
   {
     if(C.parse(argv[1]))
     {
-    	  C.startUml(ss);
+    	  C.test();
+        C.startUml(ss);
         C.run(ss);
         C.endUml(ss);
         cout << ss.str() << endl;
